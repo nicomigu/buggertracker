@@ -1,6 +1,7 @@
 const asyncHandler = require('express-async-handler');
 
 const Bug = require('../models/bugModel');
+const User = require('../models/userModel');
 
 // @desc    Get Bugs
 // @route   GET /api/bugs
@@ -25,6 +26,7 @@ const createBug = asyncHandler(async(req, res) => {
     title: req.body.title,
     status: req.body.status,
     description: req.body.description,
+    user: req.user.id
   });
   res.status(200).json(bug);
 });
@@ -39,7 +41,22 @@ const updateBug = asyncHandler(async (req, res) => {
 
   if(!bug){
     res.status(400);
-    throw new Error('Goal not found');
+    throw new Error('Bug not found');
+  }
+
+
+  const user = await User.findById(req.user.id);
+
+  //check for user
+  if(!user){
+    res.status(401);
+    throw new Error('User not found');
+  }
+
+  //Check if User owns the bug
+  if(bug.user.toString() !== user.id){
+    res.status(401);
+    throw new Error('User not authorized');
   }
 
   const updatedBug = await Bug.findByIdAndUpdate(req.params.id, req.body, {
@@ -59,6 +76,20 @@ const deleteBug = asyncHandler(async(req, res) => {
     res.status(400);
     throw new Error('Goal not found');
 
+  }
+
+  const user = await User.findById(req.user.id);
+
+  //check for user
+  if(!user){
+    res.status(401);
+    throw new Error('User not found');
+  }
+
+  //Check if User owns the bug
+  if(bug.user.toString() !== user.id){
+    res.status(401);
+    throw new Error('User not authorized');
   }
 
   await bug.remove();
