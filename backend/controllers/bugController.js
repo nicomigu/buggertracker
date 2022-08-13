@@ -45,16 +45,14 @@ const updateBug = asyncHandler(async (req, res) => {
   }
 
 
-  const user = await User.findById(req.user.id);
-
   //check for user
-  if(!user){
+  if(!req.user){
     res.status(401);
     throw new Error('User not found');
   }
 
   //Check if User owns the bug
-  if(bug.user.toString() !== user.id){
+  if(bug.user.toString() !== req.user.id){
     res.status(401);
     throw new Error('User not authorized');
   }
@@ -74,23 +72,17 @@ const deleteBug = asyncHandler(async(req, res) => {
   const bug = await Bug.findById(req.params.id);
   if(!bug){
     res.status(400);
-    throw new Error('Goal not found');
+    throw new Error('Bug not found');
 
   }
 
-  const user = await User.findById(req.user.id);
-
   //check for user
-  if(!user){
+  if(!req.user){
     res.status(401);
     throw new Error('User not found');
   }
 
-  //Check if User owns the bug
-  if(bug.user.toString() !== user.id){
-    res.status(401);
-    throw new Error('User not authorized');
-  }
+ 
 
   await bug.remove();
   res.status(200).json({id: req.params.id});
