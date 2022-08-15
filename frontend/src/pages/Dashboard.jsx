@@ -69,7 +69,7 @@ function Dashboard() {
             />
           </Box>
         ) : (
-          <h3>You have not set any goals</h3>
+          <h3>You have created any bugs</h3>
         )}
       </section>
     
