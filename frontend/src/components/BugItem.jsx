@@ -7,7 +7,7 @@ function BugItem({bug}) {
   return (
     <div className='bug'>
       <div>
-        {new Date(bug.createdAt).toLocaleString('en-ca')}
+        
       </div>
       <h2>{bug.title}</h2>
       <h2>{bug.status}</h2>

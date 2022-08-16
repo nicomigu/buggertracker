@@ -5,6 +5,9 @@ import  BugForm from '../components/BugForm'
 import  BugItem from '../components/BugItem'
 import Spinner from '../components/Spinner'
 import { getBugs, reset } from '../features/bugs/bugSlice';
+import { DataGrid } from '@mui/x-data-grid'
+import { Box } from '@mui/material';
+
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -31,6 +34,22 @@ function Dashboard() {
   if(isLoading){
     return <Spinner />
   }
+
+  const columns = [
+    {field: 'title', headerName: 'Title'},
+    {field: 'status', headerName: 'Status'},
+    {field: 'description', headerName:'Description'},
+    {field: 'createdAt', headerName: 'Date Created'}
+  ]
+
+  const rows = bugs.map((row) => ({
+    id: row._id,
+    title: row.title,
+    status: row.status,
+    description: row.description,
+    createdAt: row.createdAt
+  }))
+
   return (
     <>
     <section className='heading'>
@@ -39,15 +58,21 @@ function Dashboard() {
 
     <BugForm />
 
-    <section className="content">
-      {bugs.length > 0 ? (
-        <div className="bugs">
-          {bugs.map((bug)=>(
-          <BugItem key = {bug._id} bug = {bug}/>
-          ))}
-        </div>
-      ) : (<h3> There are no bugs found yet. </h3>)}
-    </section>
+    <section className='content'>
+        {bugs.length > 0 ? (
+          <Box sx={{ height: 400, width: '100%'}} >
+            <DataGrid
+              rows={rows}
+              columns={columns}
+              pageSize={10}
+              rowsPerPageOptions={[10]}
+            />
+          </Box>
+        ) : (
+          <h3>You have not set any goals</h3>
+        )}
+      </section>
+    
   </> 
   )
 }
